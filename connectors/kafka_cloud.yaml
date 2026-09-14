@@ -1,0 +1,27 @@
+connections:
+  kafka:
+    type: kafka
+    brokers:
+      - =env(KAFKA_BOOTSTRAP_SERVERS)
+    clientId: synthtraffic-cloud
+    acks: all
+    tls: true
+    sasl:
+      mechanism: plain
+      username: =env(KAFKA_SASL_USERNAME)
+      password: =env(KAFKA_SASL_PASSWORD)
+
+generators:
+  - name: customer-events
+    connection: kafka
+    topic: synthtraffic-customers
+    config:
+      maxEvents: 2
+    key: $customerId
+    headers:
+      eventType: CUSTOMER_CREATED
+      source: synthtraffic
+    value:
+      customerId: =uuid()
+      name: =faker(person.fullName)
+      createdAt: =now()

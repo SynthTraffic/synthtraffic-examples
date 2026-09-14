@@ -1,0 +1,24 @@
+defaults:
+  seed: 42
+  clock:
+    start: 2026-01-02T03:04:05Z
+
+connections:
+  postgres:
+    type: postgres
+    url: =env(POSTGRES_URL)
+
+generators:
+  - name: manual_rows
+    connection: postgres
+    table: ff_manual
+    config:
+      maxEvents: 2
+    schema:
+      policy: manual
+      columns:
+        id: bigint
+        label: text
+    row:
+      id: =seq()
+      label: =faker(company.name)

@@ -1,0 +1,36 @@
+defaults:
+  seed: 42
+  clock:
+    start: 2026-08-31T09:30:00Z
+
+connections:
+  orders-api:
+    type: http
+    baseUrl: http://localhost:18081/api
+    timeout: 10s
+    concurrency: 100
+
+generators:
+  - name: orders
+    connection: orders-api
+    config:
+      maxEvents: 10
+      rate: 5/s
+    const:
+      tenantId: tenant-123
+    vars:
+      orderId: =format(ORD-%06d, seq())
+    method: POST
+    path: /orders/$orderId
+    query:
+      environment: dev
+      tenantId: $tenantId
+    headers:
+      Content-Type: application/json
+      Authorization: =concat('Bearer ', env(API_TOKEN))
+      X-Source: synthtraffic
+    body:
+      orderId: $orderId
+      tenantId: $tenantId
+      amount: =uniform(10, 500, round=2)
+      createdAt: =now()

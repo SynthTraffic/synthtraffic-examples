@@ -1,0 +1,18 @@
+generators:
+  - name: scoped
+    config:
+      maxEvents: 3
+    const:
+      currency: USD
+      merchant: Acme
+    vars:
+      firstName: =faker(person.firstName)
+      lastName: =faker(person.lastName)
+    value:
+      currency: $currency
+      merchant: $merchant
+      fullName: =concat($firstName, " ", $lastName)
+      firstName: $firstName
+      lastName: $lastName
+      # same-object forward reference
+      label: =concat($merchant, "/", $fullName)

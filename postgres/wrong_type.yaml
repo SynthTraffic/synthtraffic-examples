@@ -1,0 +1,20 @@
+defaults:
+  seed: 42
+
+connections:
+  postgres:
+    type: postgres
+    url: =env(POSTGRES_URL)
+
+generators:
+  - name: wrong_type_rows
+    connection: postgres
+    table: ff_wrong_type
+    config:
+      maxEvents: 1
+    schema:
+      policy: manual
+      columns:
+        id: bigint
+    row:
+      id: not-a-number

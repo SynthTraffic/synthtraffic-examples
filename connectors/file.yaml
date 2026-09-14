@@ -1,0 +1,33 @@
+defaults:
+  seed: 42
+  clock:
+    start: 2026-08-31T09:30:00Z
+
+connections:
+  local-orders:
+    type: file
+    directory: ./output
+    format: jsonl
+    compression: gzip
+    rolling:
+      maxEvents: 3
+      maxBytes: 16MiB
+      interval: 10s
+    maxOpenStreams: 16
+
+generators:
+  - name: orders
+    connection: local-orders
+    config:
+      maxEvents: 6
+      rate: unlimited
+    const:
+      tenantId: tenant-123
+    vars:
+      outputPrefix: =format(orders/tenant=%s/part-, $tenantId)
+    prefix: $outputPrefix
+    value:
+      orderId: =format(ORD-%06d, seq())
+      tenantId: $tenantId
+      amount: =uniform(10, 500, round=2)
+      createdAt: =now()

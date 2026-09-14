@@ -1,0 +1,22 @@
+defaults:
+  seed: 42
+
+connections:
+  postgres:
+    type: postgres
+    url: =env(POSTGRES_URL)
+
+generators:
+  - name: required_rows
+    connection: postgres
+    table: ff_required
+    config:
+      maxEvents: 1
+    schema:
+      policy: drop-and-create
+      columns:
+        id: bigint primary key
+        required_value: text not null
+    row:
+      id: =seq()
+      required_value: null

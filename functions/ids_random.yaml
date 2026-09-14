@@ -1,0 +1,12 @@
+generators:
+  - name: ids_random
+    config:
+      maxEvents: 3
+    value:
+      id: =uuid()
+      ulid: =ulid()
+      n: =int(1, 10)
+      ratio: =float(0, 1)
+      token: =string(8, alphabet=hex)
+      blob: =bytes(4)
+      channel: =categorical(web=0.7, mobile=0.2, store=0.1)

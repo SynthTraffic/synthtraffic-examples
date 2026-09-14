@@ -1,0 +1,33 @@
+defaults:
+  seed: 42
+  clock:
+    start: 2026-01-02T03:04:05Z
+
+connections:
+  postgres:
+    type: postgres
+    host: localhost
+    port: 5432
+    database: synthtraffic
+    user: postgres
+    password: =env(POSTGRES_PASSWORD)
+    sslmode: disable
+
+generators:
+  - name: customer-rows
+    connection: postgres
+    table: synthtraffic_customers
+    config:
+      maxEvents: 2
+    schema:
+      policy: drop-and-create
+      columns:
+        customer_id: text primary key
+        full_name: text not null
+        active: boolean default true
+        created_at: timestamptz default now()
+    row:
+      customer_id: =uuid()
+      full_name: =faker(person.fullName)
+      active: true
+      created_at: =now()

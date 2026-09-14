@@ -1,0 +1,23 @@
+generators:
+  - name: logic_strings
+    config:
+      maxEvents: 3
+    vars:
+      amount: =uniform(100, 1500, round=2)
+      active: true
+      verified: =bool(0.8)
+    value:
+      amount: $amount
+      same: =eq($active, true)
+      large: =gte($amount, 1000)
+      allowed: =and($active, $verified)
+      tier:
+        =case:
+          - if: =gte($amount, 1000)
+            then: gold
+          - if: =gte($amount, 500)
+            then: silver
+          - else: bronze
+      orderId: =format(ORD-%06d, seq())
+      label: =concat(tier-, $tier)
+      region: =env(SYNTHTRAFFIC_REGION, local)

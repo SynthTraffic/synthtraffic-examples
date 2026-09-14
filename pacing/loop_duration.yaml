@@ -1,0 +1,19 @@
+defaults:
+  seed: 42
+  rate: 4/s
+  maxDuration: 3s
+
+generators:
+  - name: snapshots
+    config:
+      maxEvents: 1000
+    value:
+      snapshotId: =uuid()
+      sequence: =seq()
+      capturedAt: =now()
+
+schedule:
+  cycle: true
+  stages:
+    - run: [snapshots]
+      maxEvents: 4

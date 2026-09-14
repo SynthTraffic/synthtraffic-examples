@@ -1,0 +1,31 @@
+defaults:
+  seed: 404
+  clock:
+    start: 2026-01-02T03:04:05Z
+
+generators:
+  - name: shipments
+    config:
+      maxEvents: 10
+    instances:
+      count: 2
+      fields:
+        shipmentId: =seq(format=SHP-%03d)
+    value:
+      shipmentId: $shipmentId
+      eventAt: =now()
+    stateMachine:
+      initial: packed
+      states:
+        packed:
+          emit:
+            status: PACKED
+          next: in_transit
+        in_transit:
+          emit:
+            status: IN_TRANSIT
+          next: delivered
+        delivered:
+          emit:
+            status: DELIVERED
+

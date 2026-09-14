@@ -1,0 +1,26 @@
+generators:
+  - name: structure
+    config:
+      maxEvents: 2
+    vars:
+      customer:
+        customerId: =seq(format=CUST-%03d)
+        name: =faker(person.fullName)
+        internalScore: =int(1, 100)
+        city: =faker(address.city)
+      overrides:
+        city: Remote
+      scores: =range(1, 5)
+    value:
+      merged: =merge($customer, $overrides)
+      public:
+        =selectKeys:
+          from: $customer
+          keys: [customerId, name]
+      redacted:
+        =omitKeys:
+          from: $customer
+          keys: [internalScore]
+      scoreSum: =sum($scores)
+      scoreCount: =count($scores)
+      scoreAvg: =avg($scores)

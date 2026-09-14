@@ -1,0 +1,22 @@
+connections:
+  archive:
+    type: gcs
+    bucket: =env(GCS_BUCKET)
+    format: jsonl
+    compression: gzip
+    rolling:
+      maxEvents: 10000
+      maxBytes: 16MiB
+      interval: 10s
+    maxOpenStreams: 16
+    concurrency: 4
+
+generators:
+  - name: orders
+    connection: archive
+    config:
+      maxEvents: 10
+    prefix: orders/part-
+    value:
+      orderId: =format('ORD-%06d', seq())
+      createdAt: =now()

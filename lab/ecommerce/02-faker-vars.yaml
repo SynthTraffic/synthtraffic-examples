@@ -1,0 +1,28 @@
+# Exercise 02 — faker + vars + const
+# Concepts: faker locale, vars (once per event), $refs, const, concat
+
+defaults:
+  seed: 42
+  maxEvents: 5
+  faker:
+    locale: en_US
+  clock:
+    start: 2026-01-15T10:00:00Z
+
+generators:
+  - name: customers
+    const:
+      source: ecommerce-lab
+      country: US
+    vars:
+      person: =faker(person)
+    value:
+      customerId: =uuid()
+      firstName: $person.firstName
+      lastName: $person.lastName
+      fullName: =concat($person.firstName, " ", $person.lastName)
+      email: $person.email
+      phone: =faker(phone.number)
+      city: =faker(address.city)
+      state: =faker(address.state)
+      createdAt: =now(format=RFC3339Milli)

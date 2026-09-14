@@ -1,0 +1,23 @@
+connections:
+  archive:
+    type: azureBlob
+    accountUrl: =env(AZURE_STORAGE_ACCOUNT_URL)
+    container: =env(AZURE_STORAGE_CONTAINER)
+    format: jsonl
+    compression: gzip
+    rolling:
+      maxEvents: 10000
+      maxBytes: 16MiB
+      interval: 10s
+    maxOpenStreams: 16
+    concurrency: 4
+
+generators:
+  - name: orders
+    connection: archive
+    config:
+      maxEvents: 10
+    prefix: orders/part-
+    value:
+      orderId: =format('ORD-%06d', seq())
+      createdAt: =now()

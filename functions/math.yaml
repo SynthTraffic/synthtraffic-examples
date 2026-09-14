@@ -1,0 +1,20 @@
+generators:
+  - name: math_demo
+    config:
+      maxEvents: 3
+    vars:
+      unitPrice: =uniform(10, 40, round=2)
+      quantity: =int(1, 5)
+      taxRate: 0.08
+    value:
+      unitPrice: $unitPrice
+      quantity: $quantity
+      subtotal: =multiply($unitPrice, $quantity, round=2)
+      tax: =multiply($subtotal, $taxRate, round=2)
+      total: =add($subtotal, $tax, round=2)
+      ratio: =divide($total, $quantity, round=2)
+      power: =pow(2, 8)
+      rounded: =round(1.236, 2)
+      low: =min(3, 1, 2)
+      high: =max(3, 1, 2)
+      delta: =subtract($high, $low)

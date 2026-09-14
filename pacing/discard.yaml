@@ -1,0 +1,20 @@
+defaults:
+  seed: 7
+
+generators:
+  - name: sensors
+    config:
+      maxEvents: 5
+      discard:
+        probability: 0.4
+        retainHistory: true
+    value:
+      id: =seq(format=S-%d)
+      reading: =normal(mean=60, sd=5, round=1)
+
+  - name: alerts
+    config:
+      maxEvents: 2
+    value:
+      sensorId: =ref(sensors.id)
+      kind: late-or-missing

@@ -1,0 +1,12 @@
+defaults:
+  seed: 42
+
+generators:
+  - name: heartbeat
+    config:
+      rate: 5/s
+      maxDuration: 2s
+    value:
+      sequence: =seq()
+      eventType: HEARTBEAT
+      eventAt: =now()

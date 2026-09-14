@@ -1,0 +1,17 @@
+defaults:
+  seed: 42
+  clock:
+    start: 2026-01-02T03:04:05Z
+
+generators:
+  - name: sensors
+    config:
+      maxEvents: 5
+    instances:
+      count: 5
+      startGap: 250ms
+      fields:
+        sensorId: =seq(format=SENSOR-%02d)
+    value:
+      sensorId: $sensorId
+      eventAt: =now()

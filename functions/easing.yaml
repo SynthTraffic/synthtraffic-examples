@@ -1,0 +1,25 @@
+defaults:
+  seed: 42
+  clock:
+    start: 2026-01-02T03:04:05Z
+
+generators:
+  - name: oven
+    config:
+      maxEvents: 5
+      interval: 1s
+    value:
+      event: =seq(start=1)
+      byEvent: =easing(from=0, to=4, over=5, curve=linear)
+      byTime: =easing(from=20, to=80, over=4s, curve=linear, round=2)
+      chain:
+        =easingChain(from=20, round=2):
+          - to: 80
+            over: 2
+            curve: linear
+          - to: 80
+            over: 2
+            curve: linear
+          - to: 25
+            over: 2
+            curve: linear

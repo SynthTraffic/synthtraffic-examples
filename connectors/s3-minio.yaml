@@ -1,0 +1,18 @@
+connections:
+  objects:
+    type: s3
+    bucket: synthtraffic-demo
+    region: us-east-1
+    endpoint: http://localhost:9000
+    pathStyle: true
+    rolling: {maxEvents: 3, maxBytes: 16MiB, interval: 10s}
+    concurrency: 4
+
+generators:
+  - name: orders
+    connection: objects
+    config: {maxEvents: 6}
+    prefix: orders/part-
+    value:
+      orderId: =format(ORD-%06d, seq())
+      createdAt: =now()

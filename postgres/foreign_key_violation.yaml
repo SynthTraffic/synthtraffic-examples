@@ -1,0 +1,39 @@
+defaults:
+  seed: 42
+
+connections:
+  postgres:
+    type: postgres
+    url: =env(POSTGRES_URL)
+
+generators:
+  - name: parents
+    connection: postgres
+    table: ff_fk_parent
+    config:
+      maxEvents: 1
+    schema:
+      policy: drop-and-create
+      columns:
+        parent_id: text primary key
+    row:
+      parent_id: parent-1
+
+  - name: children
+    connection: postgres
+    table: ff_fk_child
+    config:
+      maxEvents: 1
+    schema:
+      policy: drop-and-create
+      columns:
+        child_id: text primary key
+        parent_id: text references ff_fk_parent(parent_id)
+    row:
+      child_id: child-1
+      parent_id: missing-parent
+
+schedule:
+  stages:
+    - run: [parents]
+    - run: [children]

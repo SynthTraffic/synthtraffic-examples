@@ -1,0 +1,41 @@
+defaults:
+  seed: 42
+  clock:
+    start: 2026-01-02T03:04:05Z
+
+generators:
+  - name: customers
+    config:
+      maxEvents: 5
+    value:
+      customerId: =uuid()
+      name: =faker(person.fullName)
+
+  - name: orders
+    config:
+      maxEvents: 10
+    instances:
+      count: 3
+      fields:
+        orderId: =uuid()
+        customer: =ref(customers)
+    value:
+      orderId: $orderId
+      customerId: $customer.customerId
+      customerName: $customer.name
+      eventAt: =now()
+    stateMachine:
+      initial: created
+      states:
+        created:
+          emit:
+            status: CREATED
+          next: completed
+        completed:
+          emit:
+            status: COMPLETED
+
+schedule:
+  stages:
+    - run: [customers]
+    - run: [orders]

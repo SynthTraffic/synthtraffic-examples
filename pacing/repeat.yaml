@@ -1,0 +1,13 @@
+defaults:
+  seed: 21
+
+generators:
+  - name: telemetry
+    config:
+      maxEvents: 3
+      repeat:
+        probability: 1
+        times: 1
+    value:
+      id: =seq(format=T-%d)
+      reading: =normal(mean=20, sd=2, round=1)

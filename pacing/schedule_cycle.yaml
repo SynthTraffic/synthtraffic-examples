@@ -1,0 +1,28 @@
+defaults:
+  seed: 42
+  clock:
+    start: 2026-01-02T03:04:05Z
+  rate: unlimited
+
+generators:
+  - name: customers
+    config:
+      maxEvents: 20
+    value:
+      customerId: =seq(start=1)
+      name: =faker(person.fullName)
+  - name: orders
+    config:
+      maxEvents: 40
+    value:
+      orderId: =seq(start=1)
+      customerId: =ref(customers.customerId)
+      amount: =uniform(10, 100, round=2)
+
+schedule:
+  cycle: true
+  stages:
+    - run: [customers]
+      maxEvents: 5
+    - run: [orders]
+      maxEvents: 10

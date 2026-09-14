@@ -1,0 +1,13 @@
+defaults:
+  seed: 42
+
+generators:
+  - name: signups
+    config:
+      rate: 10/s
+      maxEvents: 5
+      maxDuration: 30s
+    value:
+      signupId: =uuid()
+      email: =faker(internet.email)
+      createdAt: =now()

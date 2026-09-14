@@ -1,0 +1,12 @@
+defaults:
+  seed: 42
+  maxEvents: 10
+
+generators:
+  - name: customers
+    value:
+      customerId: =uuid()
+      fullName: =concat($firstName, " ", $lastName)
+      firstName: =faker(person.firstName)
+      lastName: =faker(person.lastName)
+      createdAt: =now()

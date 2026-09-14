@@ -1,0 +1,17 @@
+defaults:
+  seed: 42
+  clock:
+    start: 2026-01-02T10:00:00Z
+  maxEvents: 5
+
+generators:
+  - name: ticks
+    config:
+      rate:
+        default: 1/s
+        windows:
+          - when: "1 10 * * *"
+            rate: 2/s
+    value:
+      tick: =seq()
+      at: =now()

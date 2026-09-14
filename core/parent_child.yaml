@@ -1,0 +1,21 @@
+generators:
+  - name: customers
+    config:
+      maxEvents: 3
+    value:
+      customerId: =seq(format=CUST-%03d)
+      name: =faker(person.fullName)
+
+  - name: orders
+    config:
+      maxEvents: 6
+    value:
+      orderId: =seq(format=ORD-%03d)
+      customerId: =ref(customers.customerId)
+      customerName: =ref(customers.name)
+      createdAt: =now()
+
+schedule:
+  stages:
+    - run: [customers]
+    - run: [orders]

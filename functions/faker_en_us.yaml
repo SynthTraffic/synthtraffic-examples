@@ -1,0 +1,18 @@
+defaults:
+  seed: 71
+  faker: {locale: en_US}
+
+generators:
+  - name: us_customers
+    config:
+      maxEvents: 2
+    vars:
+      person: =faker(person)
+    value:
+      name: $person.fullName
+      firstName: $person.firstName
+      lastName: $person.lastName
+      email: $person.email
+      phone: =faker(phone.number)
+      city: =faker(address.city)
+      state: =faker(address.state)

@@ -1,0 +1,8 @@
+license.env
+*.env
+output/
+*.exe
+http-server/http-server
+.DS_Store
+.idea/
+.vscode/

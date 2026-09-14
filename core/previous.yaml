@@ -1,0 +1,25 @@
+defaults:
+  seed: 505
+  clock:
+    start: 2026-01-02T03:04:05Z
+
+generators:
+  - name: counters
+    config:
+      maxEvents: 4
+    instances:
+      count: 2
+      fields:
+        instanceId: =seq()
+    vars:
+      currentValue: =seq(start=10, step=5)
+      previousValue:
+        =case:
+          - if: =lt($currentValue, 20)
+            then: none
+          - else: =previous(currentValue)
+    value:
+      instanceId: $instanceId
+      currentValue: $currentValue
+      previousValue: $previousValue
+

@@ -1,0 +1,13 @@
+defaults:
+  seed: 42
+  clock:
+    start: 2026-01-02T03:04:05Z
+  maxEvents: 5
+
+generators:
+  - name: ticks
+    config:
+      interval: =uniformDuration(1ms, 3ms)
+    value:
+      tick: =seq()
+      at: =now()

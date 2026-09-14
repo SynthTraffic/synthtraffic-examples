@@ -1,0 +1,13 @@
+# Exercise 01 — first generator (no connectors yet)
+# Concepts: defaults.seed, defaults.maxEvents, generators, value, =uuid(), =now()
+
+defaults:
+  seed: 42
+  maxEvents: 5
+
+generators:
+  - name: customers
+    value:
+      customerId: =uuid()
+      email: "customer@example.com"
+      createdAt: =now(format=RFC3339Milli)

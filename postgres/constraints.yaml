@@ -1,0 +1,51 @@
+defaults:
+  seed: 42
+  clock:
+    start: 2026-01-02T03:04:05Z
+
+connections:
+  postgres:
+    type: postgres
+    url: =env(POSTGRES_URL)
+
+generators:
+  - name: departments
+    connection: postgres
+    table: ff_departments
+    config:
+      maxEvents: 2
+    schema:
+      policy: drop-and-create
+      columns:
+        department_id: text primary key
+        name: text not null
+    row:
+      department_id: =format(dept-%d, seq())
+      name: =oneOf(Engineering, Finance)
+
+  - name: employees
+    connection: postgres
+    table: ff_employees
+    config:
+      maxEvents: 3
+    schema:
+      policy: drop-and-create
+      columns:
+        employee_id: text primary key
+        department_id: text references ff_departments(department_id)
+        full_name: text not null
+        status: varchar(20) default 'active'
+        salary: numeric default 0.00
+    vars:
+      department: =ref(departments.department_id)
+    row:
+      employee_id: =format(emp-%d, seq())
+      department_id: $department
+      full_name: =faker(person.fullName)
+      status: active
+      salary: =round(normal(mean=90000, sd=5000, min=50000), 2)
+
+schedule:
+  stages:
+    - run: [departments]
+    - run: [employees]

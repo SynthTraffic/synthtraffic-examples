@@ -1,0 +1,26 @@
+defaults:
+  seed: 303
+  clock:
+    start: 2026-01-02T03:04:05Z
+
+generators:
+  - name: orders
+    config:
+      maxEvents: 2
+    value:
+      orderId: =seq(format=ORD-%03d)
+      items:
+        =array:
+          count: 3
+          of:
+            lineNumber: =seq(start=1)
+            product: =cycle(keyboard, mouse, monitor)
+            unitPrice: =cycle(25, 15, 200)
+            quantity: =int(1, 3)
+            lineTotal: =multiply($unitPrice, $quantity)
+      itemCount: =count($items)
+      subtotal: =sum($items.lineTotal)
+      averageUnitPrice: =avg($items.unitPrice)
+      cheapestUnitPrice: =min($items.unitPrice)
+      mostExpensiveUnitPrice: =max($items.unitPrice)
+
