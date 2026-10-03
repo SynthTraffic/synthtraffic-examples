@@ -1,0 +1,20 @@
+defaults:
+  seed: 42
+  clock:
+    start: 2026-01-02T03:04:05.123456789Z
+
+generators:
+  - name: timestamp_arithmetic
+    config:
+      maxEvents: 1
+    vars:
+      createdAt: =now()
+    value:
+      createdAt: $createdAt
+      expiresAt: =addDuration($createdAt, 24h)
+      startedAt: =subtractDuration($createdAt, 30m)
+      randomExpiry: =addDuration($createdAt, randomDuration(1h, 1h))
+      dateOnly: =addDuration(2026-01-02, 12h)
+      offsetInput: =subtractDuration(2026-01-02T03:04:05+05:30, 5m)
+      nested: =addDuration(dateTimeBetween(2026-01-02T03:04:05.123456789Z, 2026-01-02T03:04:05.123456789Z), 1ns)
+      negative: =addDuration($createdAt, -15m)

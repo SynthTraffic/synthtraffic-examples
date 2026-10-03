@@ -1,0 +1,20 @@
+defaults:
+  seed: 42
+  clock:
+    start: 2026-01-02T03:04:05Z
+
+generators:
+  - name: timestamp_sequence
+    config:
+      maxEvents: 4
+    value:
+      day: =timestamp(start=clockStart(), advanceBy=24h, format=RFC3339)
+      densified:
+        =timestamp:
+          start: "2026-03-01T04:58:00Z"
+          advanceBy:
+            default: 5m
+            windows:
+              - when: "* 5 * * *"
+                by: 1s
+          format: RFC3339

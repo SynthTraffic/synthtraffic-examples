@@ -4,7 +4,7 @@ generators:
       maxEvents: 2
     vars:
       customer:
-        customerId: =seq(format=CUST-%03d)
+        customerId: =seq(pattern=CUST-%03d)
         name: =faker(person.fullName)
         internalScore: =int(1, 100)
         city: =faker(address.city)
