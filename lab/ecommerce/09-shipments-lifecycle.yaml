@@ -1,0 +1,35 @@
+# Exercise 09 — shipment lifecycle with fixed next
+# Concepts: multi-step stateMachine, fixed next, terminal COMPLETED
+
+defaults:
+  seed: 42
+  clock:
+    start: 2026-01-15T10:00:00Z
+
+generators:
+  - name: shipments
+    config:
+      maxEvents: 9
+    instances:
+      count: 3
+      fields:
+        shipmentId: =seq(pattern=SHP-%03d)
+        orderId: =seq(pattern=ORD-%03d)
+    value:
+      shipmentId: $shipmentId
+      orderId: $orderId
+      eventAt: =now(format=RFC3339Milli)
+    stateMachine:
+      initial: packed
+      states:
+        packed:
+          emit:
+            status: PACKED
+          next: out_for_delivery
+        out_for_delivery:
+          emit:
+            status: OUT_FOR_DELIVERY
+          next: delivered
+        delivered:
+          emit:
+            status: DELIVERED

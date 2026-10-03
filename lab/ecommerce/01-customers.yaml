@@ -1,5 +1,5 @@
-# Exercise 01 — first generator (no connectors yet)
-# Concepts: defaults.seed, defaults.maxEvents, generators, value, =uuid(), =now()
+# Exercise 01 — first generator
+# Concepts: defaults.seed, defaults.maxEvents, generators, value, uuid(), now()
 
 defaults:
   seed: 42

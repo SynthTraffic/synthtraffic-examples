@@ -1,0 +1,41 @@
+# Exercise 10 — order line items and aggregates
+# Concepts: array, count/sum/avg/min/max, selectKeys, omitKeys, merge
+
+defaults:
+  seed: 42
+  clock:
+    start: 2026-01-15T10:00:00Z
+  faker:
+    locale: en_US
+
+generators:
+  - name: orders_with_lines
+    config:
+      maxEvents: 3
+    vars:
+      customer:
+        customerId: =seq(pattern=CUST-%03d)
+        name: =faker(person.fullName)
+        internalScore: =int(1, 100)
+      publicCustomer:
+        =selectKeys:
+          from: $customer
+          keys: [customerId, name]
+    value:
+      orderId: =seq(pattern=ORD-%03d)
+      customer: $publicCustomer
+      items:
+        =array:
+          count: 3
+          of:
+            lineNumber: =seq(start=1)
+            product: =cycle(keyboard, mouse, monitor)
+            unitPrice: =cycle(25, 15, 200)
+            quantity: =int(1, 3)
+            lineTotal: =multiply($unitPrice, $quantity)
+      itemCount: =count($items)
+      subtotal: =sum($items.lineTotal)
+      averageUnitPrice: =avg($items.unitPrice)
+      cheapestUnitPrice: =min($items.unitPrice)
+      mostExpensiveUnitPrice: =max($items.unitPrice)
+      createdAt: =now(format=RFC3339Milli)

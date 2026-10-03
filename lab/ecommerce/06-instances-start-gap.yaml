@@ -1,0 +1,23 @@
+# Exercise 06 — stable entity instances
+# Concepts: instances.count, instances.fields, instances.startGap, per-instance identity
+
+defaults:
+  seed: 42
+  clock:
+    start: 2026-01-15T10:00:00Z
+
+generators:
+  - name: active_carts
+    config:
+      maxEvents: 9
+    instances:
+      count: 3
+      startGap: 100ms
+      fields:
+        cartId: =seq(pattern=CART-%02d)
+        shopper: =faker(person.fullName)
+    value:
+      cartId: $cartId
+      shopper: $shopper
+      itemCount: =int(1, 5)
+      updatedAt: =now(format=RFC3339Milli)

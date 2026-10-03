@@ -1,0 +1,40 @@
+# Exercise 08 — payment state machine
+# Concepts: stateMachine, weightedOneOf transitions, terminal states, emit fields
+
+defaults:
+  seed: 42
+  clock:
+    start: 2026-01-15T10:00:00Z
+
+generators:
+  - name: payments
+    config:
+      maxEvents: 8
+    instances:
+      count: 4
+      fields:
+        paymentId: =seq(pattern=PAY-%03d)
+        orderId: =seq(pattern=ORD-%03d)
+        amount: =float(20, 150, round=2)
+    value:
+      paymentId: $paymentId
+      orderId: $orderId
+      amount: $amount
+      currency: USD
+      eventAt: =now(format=RFC3339Milli)
+    stateMachine:
+      initial: authorized
+      states:
+        authorized:
+          emit:
+            status: AUTHORIZED
+          next:
+            =weightedOneOf:
+              captured: 0.8
+              failed: 0.2
+        captured:
+          emit:
+            status: CAPTURED
+        failed:
+          emit:
+            status: FAILED

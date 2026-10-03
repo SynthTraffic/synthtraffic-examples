@@ -1,0 +1,22 @@
+# Exercise 03 — catalog products
+# Concepts: seq(pattern=), oneOf, weightedOneOf, float(round=), bool, config.maxEvents
+
+defaults:
+  seed: 42
+  clock:
+    start: 2026-01-15T10:00:00Z
+  faker:
+    locale: en_US
+
+generators:
+  - name: products
+    config:
+      maxEvents: 8
+    value:
+      productId: =seq(pattern=SKU-%03d)
+      name: =faker(commerce.productName)
+      category: =oneOf(electronics, apparel, home, outdoor)
+      price: =float(9.99, 249.99, round=2)
+      inStock: =bool(0.85)
+      tier: =weightedOneOf(standard=0.7, premium=0.25, clearance=0.05)
+      listedAt: =now(format=RFC3339Milli)
