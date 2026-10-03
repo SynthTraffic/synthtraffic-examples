@@ -7,7 +7,7 @@ defaults:
 generators:
   - name: ticks
     config:
-      interval: =uniformDuration(1ms, 3ms)
+      interval: =randomDuration(1ms, 3ms)
     value:
       tick: =seq()
       at: =now()

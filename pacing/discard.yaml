@@ -5,11 +5,12 @@ generators:
   - name: sensors
     config:
       maxEvents: 5
-      discard:
-        probability: 0.4
-        retainHistory: true
+      delivery:
+        discard:
+          probability: 0.4
+          retainHistory: true
     value:
-      id: =seq(format=S-%d)
+      id: =seq(pattern=S-%d)
       reading: =normal(mean=60, sd=5, round=1)
 
   - name: alerts

@@ -2,9 +2,10 @@ generators:
   - name: delayed
     config:
       maxEvents: 5
-      delay:
-        probability: 0.5
-        duration: =uniformDuration(100ms, 300ms)
+      delivery:
+        delay:
+          probability: 0.5
+          by: =randomDuration(100ms, 300ms)
     value:
       id: =uuid()
       eventAt: =now()

@@ -1,0 +1,76 @@
+# Exercise 18 — capstone marketplace day
+# Concepts: customers → orders → payments lifecycle, refs, schedule, coherent faker person
+# Run: synthtraffic run lab/ecommerce/18-marketplace-day.yaml --stdout --seed 42
+
+defaults:
+  seed: 42
+  clock:
+    start: 2026-01-15T10:00:00Z
+  faker:
+    locale: en_US
+
+generators:
+  - name: customers
+    config:
+      maxEvents: 4
+      history:
+        maxEntries: 4
+    vars:
+      person: =faker(person)
+    value:
+      customerId: =seq(pattern=CUST-%03d)
+      fullName: $person.fullName
+      email: $person.email
+      city: =faker(address.city)
+
+  - name: orders
+    config:
+      maxEvents: 4
+      history:
+        maxEntries: 4
+    value:
+      orderId: =seq(pattern=ORD-%03d)
+      customer: =ref(customers)
+      customerId: $customer.customerId
+      customerName: $customer.fullName
+      product: =faker(commerce.productName)
+      amount: =float(15, 180, round=2)
+      placedAt: =now(format=RFC3339Milli)
+
+  - name: payments
+    config:
+      maxEvents: 8
+    instances:
+      count: 4
+      fields:
+        paymentId: =seq(pattern=PAY-%03d)
+        order: =ref(orders)
+    value:
+      paymentId: $paymentId
+      orderId: $order.orderId
+      customerId: $order.customerId
+      amount: $order.amount
+      currency: USD
+      eventAt: =now(format=RFC3339Milli)
+    stateMachine:
+      initial: authorized
+      states:
+        authorized:
+          emit:
+            status: AUTHORIZED
+          next:
+            =weightedOneOf:
+              captured: 0.75
+              failed: 0.25
+        captured:
+          emit:
+            status: CAPTURED
+        failed:
+          emit:
+            status: FAILED
+
+schedule:
+  stages:
+    - run: [customers]
+    - run: [orders]
+    - run: [payments]

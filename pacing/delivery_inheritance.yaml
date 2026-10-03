@@ -1,0 +1,25 @@
+defaults:
+  seed: 42
+  clock: {start: 2026-01-02T03:04:05Z}
+  delivery:
+    delay: {probability: 1, by: 1ms}
+    discard: {probability: 0}
+    repeat: {probability: 1, times: 1}
+
+generators:
+  - name: delayed
+    config: {maxEvents: 1}
+    value:
+      source: delayed
+      id: =seq()
+      eventAt: =now()
+
+  - name: immediate
+    config:
+      maxEvents: 1
+      delivery:
+        delay: 0s
+    value:
+      source: immediate
+      id: =seq()
+      eventAt: =now()

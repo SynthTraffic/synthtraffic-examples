@@ -13,7 +13,7 @@ generators:
       capturedAt: =now()
 
 schedule:
-  cycle: true
+  mode: cycle
   stages:
     - run: [snapshots]
-      maxEvents: 4
+      batchSize: 4

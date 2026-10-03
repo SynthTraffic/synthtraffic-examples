@@ -1,11 +1,14 @@
 defaults:
   seed: 42
 
+# maxDuration stops real-time runs; maxEvents bounds deterministic sample/golden
+# runs where wall-clock duration is not the pacing authority.
 generators:
   - name: heartbeat
     config:
       rate: 5/s
       maxDuration: 2s
+      maxEvents: 10
     value:
       sequence: =seq()
       eventType: HEARTBEAT
