@@ -1,5 +1,6 @@
-# Exercise 02 — faker + vars + const
-# Concepts: faker locale, vars (once per event), $ refs, const, concat, clock.start
+# ShopLane day — step 02: signups look like real shoppers
+# Why: pipelines and demos need coherent person fields, not one hard-coded email.
+# Concepts: faker locale, clock.start, const (emitted), vars, $, concat
 
 defaults:
   seed: 42
@@ -12,12 +13,16 @@ defaults:
 generators:
   - name: customers
     const:
+      store: ShopLane
       source: ecommerce-lab
       country: US
     vars:
       person: =faker(person)
     value:
-      customerId: =uuid()
+      store: $store
+      source: $source
+      country: $country
+      customerId: =seq(pattern=CUST-%03d)
       firstName: $person.firstName
       lastName: $person.lastName
       fullName: =concat($person.firstName, " ", $person.lastName)

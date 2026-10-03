@@ -1,5 +1,6 @@
-# Exercise 07 — previous field per instance
-# Concepts: previous(field), instance isolation, case for the first reading
+# ShopLane day — step 07: each cart remembers its last item count
+# Why: streaming tests often need deltas from the previous event on the same entity.
+# Concepts: previous(field), instance isolation, case for the first update
 
 defaults:
   seed: 42
@@ -10,10 +11,13 @@ generators:
   - name: cart_updates
     config:
       maxEvents: 8
+    const:
+      store: ShopLane
     instances:
       count: 2
       fields:
         cartId: =seq(pattern=CART-%02d)
+        customerId: =seq(pattern=CUST-%03d)
     vars:
       updateNumber: =seq(start=1)
       itemCount: =int(1, 4)
@@ -23,7 +27,9 @@ generators:
             then: null
           - else: =previous(itemCount)
     value:
+      store: $store
       cartId: $cartId
+      customerId: $customerId
       updateNumber: $updateNumber
       itemCount: $itemCount
       previousItemCount: $previousItemCount

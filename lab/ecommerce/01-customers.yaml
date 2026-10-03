@@ -1,5 +1,6 @@
-# Exercise 01 — first generator
-# Concepts: defaults.seed, defaults.maxEvents, generators, value, uuid(), now()
+# ShopLane day — step 01: first signups land
+# Why: prove a YAML scenario can emit events without scripts.
+# Concepts: defaults.seed, maxEvents, generators, uuid(), now()
 
 defaults:
   seed: 42

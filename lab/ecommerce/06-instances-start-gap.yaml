@@ -1,23 +1,31 @@
-# Exercise 06 — stable entity instances
-# Concepts: instances.count, instances.fields, instances.startGap, per-instance identity
+# ShopLane day — step 06: three carts open on staggered timers
+# Why: entity identity stays stable while multiple carts emit updates.
+# Concepts: instances.count, instances.fields, instances.startGap
 
 defaults:
   seed: 42
   clock:
     start: 2026-01-15T10:00:00Z
+  faker:
+    locale: en_US
 
 generators:
   - name: active_carts
     config:
       maxEvents: 9
+    const:
+      store: ShopLane
     instances:
       count: 3
       startGap: 100ms
       fields:
         cartId: =seq(pattern=CART-%02d)
+        customerId: =seq(pattern=CUST-%03d)
         shopper: =faker(person.fullName)
     value:
+      store: $store
       cartId: $cartId
+      customerId: $customerId
       shopper: $shopper
       itemCount: =int(1, 5)
       updatedAt: =now(format=RFC3339Milli)

@@ -1,5 +1,6 @@
-# Exercise 03 — catalog products
-# Concepts: seq(pattern=), oneOf, weightedOneOf, float(round=), bool, config.maxEvents
+# ShopLane day — step 03: catalog goes live before anyone can buy
+# Why: orders later need real SKUs and prices to reference.
+# Concepts: seq(pattern=), oneOf, weightedOneOf, float(round=), bool, const
 
 defaults:
   seed: 42
@@ -12,7 +13,10 @@ generators:
   - name: products
     config:
       maxEvents: 8
+    const:
+      store: ShopLane
     value:
+      store: $store
       productId: =seq(pattern=SKU-%03d)
       name: =faker(commerce.productName)
       category: =oneOf(electronics, apparel, home, outdoor)
