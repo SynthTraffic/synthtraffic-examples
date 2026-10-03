@@ -1,0 +1,26 @@
+# Exercise 13 — delay, discard, repeat
+# Concepts: delivery.delay, delivery.discard, delivery.repeat, randomDuration
+# Tip: sample ignores pacing; run --stdout shows attempted vs emitted stats on stderr.
+
+defaults:
+  seed: 42
+  clock:
+    start: 2026-01-15T10:00:00Z
+
+generators:
+  - name: notifications
+    config:
+      maxEvents: 8
+      delivery:
+        delay:
+          probability: 0.5
+          by: =randomDuration(50ms, 200ms)
+        discard:
+          probability: 0.25
+        repeat:
+          probability: 0.3
+          times: 1
+    value:
+      notificationId: =seq(pattern=N-%03d)
+      channel: =oneOf(email, sms, push)
+      eventAt: =now(format=RFC3339Milli)

@@ -1,0 +1,19 @@
+# Exactly three parent records fit the retained-history limit.
+generators:
+  - name: parents
+    config:
+      maxEvents: 3
+      history:
+        maxEntries: 3
+    value:
+      parentId: =seq(pattern=P-%03d)
+  - name: children
+    config:
+      maxEvents: 6
+    value:
+      childId: =seq(pattern=C-%03d)
+      parentId: =ref(parents.parentId)
+schedule:
+  stages:
+    - run: [parents]
+    - run: [children]

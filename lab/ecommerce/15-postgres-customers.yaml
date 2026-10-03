@@ -1,0 +1,41 @@
+# Exercise 15 — PostgreSQL rows
+# Concepts: postgres connection, schema.policy, columns, row mapping, env()
+# Preview: sample / run --stdout (no DB). Real run needs POSTGRES_PASSWORD and a reachable server.
+
+defaults:
+  seed: 42
+  clock:
+    start: 2026-01-15T10:00:00Z
+  faker:
+    locale: en_US
+
+connections:
+  postgres:
+    type: postgres
+    host: localhost
+    port: 5432
+    database: synthtraffic
+    user: postgres
+    password: =env(POSTGRES_PASSWORD)
+    sslmode: disable
+
+generators:
+  - name: customers
+    connection: postgres
+    table: lab_customers
+    config:
+      maxEvents: 4
+    schema:
+      policy: drop-and-create
+      columns:
+        customer_id: text primary key
+        full_name: text not null
+        email: text
+        active: boolean default true
+        created_at: timestamptz default now()
+    row:
+      customer_id: =seq(pattern=CUST-%03d)
+      full_name: =faker(person.fullName)
+      email: =faker(person.email)
+      active: true
+      created_at: =now()

@@ -1,0 +1,48 @@
+# Stable claim lines and totals, then a probabilistic adjudication outcome.
+defaults:
+  seed: 42
+  clock:
+    start: 2026-01-02T09:00:00Z
+generators:
+  - name: claims
+    config:
+      maxEvents: 12
+    instances:
+      count: 4
+      fields:
+        claimId: =seq(pattern=CLM-%03d)
+        patientId: =seq(pattern=PAT-%03d)
+        lines:
+          =array:
+            count: 3
+            of:
+              service: =cycle(consultation, laboratory, imaging)
+              units: =int(1, 2)
+              unitPrice: =float(20, 150, round=2)
+              amount: =multiply($units, $unitPrice, round=2)
+    value:
+      recordType: claim
+      claimId: $claimId
+      patientId: $patientId
+      currency: USD
+      lines: $lines
+      lineCount: =count($lines)
+      total: =sum($lines.amount)
+      eventAt: =now()
+    stateMachine:
+      initial: submitted
+      states:
+        submitted:
+          emit:
+            status: SUBMITTED
+          next:
+            =weightedOneOf:
+              paid: 0.75
+              denied: 0.25
+        paid:
+          emit:
+            status: PAID
+        denied:
+          emit:
+            status: DENIED
+            reason: =oneOf(missing-documentation, coverage-excluded)

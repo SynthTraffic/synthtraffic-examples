@@ -1,0 +1,32 @@
+# Exercise 12 — time helpers and schedule cycle
+# Concepts: timestamp, clockStart, addDuration, schedule mode cycle, batchSize
+
+defaults:
+  seed: 42
+  clock:
+    start: 2026-01-15T10:00:00Z
+  rate: unlimited
+
+generators:
+  - name: daily_promos
+    config:
+      maxEvents: 4
+    value:
+      promoId: =seq(pattern=PROMO-%02d)
+      startsAt: =timestamp(start=clockStart(), advanceBy=24h, format=RFC3339)
+      endsAt: =addDuration($startsAt, 12h)
+
+  - name: flash_batches
+    config:
+      maxEvents: 6
+    value:
+      batchId: =seq(start=1)
+      at: =now(format=RFC3339Milli)
+
+schedule:
+  mode: cycle
+  stages:
+    - run: [daily_promos]
+      batchSize: 2
+    - run: [flash_batches]
+      batchSize: 2

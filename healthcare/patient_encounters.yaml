@@ -1,0 +1,61 @@
+# Fictional patient registry followed by correlated encounter lifecycles.
+defaults:
+  seed: 42
+  clock:
+    start: 2026-01-02T09:00:00Z
+generators:
+  - name: patients
+    config:
+      maxEvents: 4
+      history:
+        maxEntries: 4
+    value:
+      recordType: patient
+      patientId: =seq(pattern=PAT-%03d)
+      person: =faker(person)
+      birthDate: =dateBetween(1950-01-01, 2005-12-31)
+  - name: practitioners
+    config:
+      maxEvents: 3
+      history:
+        maxEntries: 3
+    value:
+      recordType: practitioner
+      practitionerId: =seq(pattern=PRAC-%03d)
+      name: =faker(person.fullName)
+      specialty: =cycle(general-medicine, cardiology, orthopedics)
+  - name: encounters
+    config:
+      maxEvents: 12
+    instances:
+      count: 4
+      fields:
+        encounterId: =seq(pattern=ENC-%03d)
+        patient: =ref(patients)
+        practitioner: =ref(practitioners)
+    value:
+      recordType: encounter
+      encounterId: $encounterId
+      patientId: $patient.patientId
+      patientPerson: $patient.person
+      practitionerId: $practitioner.practitionerId
+      specialty: $practitioner.specialty
+      eventAt: =now()
+    stateMachine:
+      initial: registered
+      states:
+        registered:
+          emit:
+            status: REGISTERED
+          next: in_progress
+        in_progress:
+          emit:
+            status: IN_PROGRESS
+          next: discharged
+        discharged:
+          emit:
+            status: DISCHARGED
+schedule:
+  stages:
+    - run: [patients, practitioners]
+    - run: [encounters]

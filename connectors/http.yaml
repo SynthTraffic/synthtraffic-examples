@@ -19,7 +19,7 @@ generators:
     const:
       tenantId: tenant-123
     vars:
-      orderId: =format(ORD-%06d, seq())
+      orderId: =formatString(ORD-%06d, seq())
     method: POST
     path: /orders/$orderId
     query:
@@ -32,5 +32,5 @@ generators:
     body:
       orderId: $orderId
       tenantId: $tenantId
-      amount: =uniform(10, 500, round=2)
+      amount: =float(10, 500, round=2)
       createdAt: =now()

@@ -1,0 +1,17 @@
+defaults:
+  seed: 42
+  clock:
+    start: 2026-01-02T03:04:05Z
+generators:
+  - name: numeric_helpers
+    config:
+      maxEvents: 1
+    value:
+      absolute: =abs(-3.70)
+      whole: =floor(3.70)
+      required: =ceil(3.10)
+      negativeFloor: =floor(-1.2)
+      negativeCeiling: =ceil(-1.2)
+      exactInteger: =abs(-9007199254740993)
+      nested: =ceil(abs(-3.2))
+      rounded: =abs(-1.236, round=2)

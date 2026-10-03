@@ -1,5 +1,5 @@
 # Exercise 02 — faker + vars + const
-# Concepts: faker locale, vars (once per event), $refs, const, concat
+# Concepts: faker locale, vars (once per event), $ refs, const, concat, clock.start
 
 defaults:
   seed: 42

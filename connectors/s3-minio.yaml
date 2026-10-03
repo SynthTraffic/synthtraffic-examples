@@ -5,7 +5,7 @@ connections:
     region: us-east-1
     endpoint: http://localhost:9000
     pathStyle: true
-    rolling: {maxEvents: 3, maxBytes: 16MiB, interval: 10s}
+    rolling: {maxRecords: 3, maxBytes: 16MiB, maxDuration: 10s}
     concurrency: 4
 
 generators:
@@ -14,5 +14,5 @@ generators:
     config: {maxEvents: 6}
     prefix: orders/part-
     value:
-      orderId: =format(ORD-%06d, seq())
+      orderId: =formatString(ORD-%06d, seq())
       createdAt: =now()

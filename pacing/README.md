@@ -1,11 +1,6 @@
 # Pacing examples
 
-Control how fast events appear, how long a generator runs, and how connectors release or drop writes.
-
-```bash
-synthtraffic sample pacing/interval.yaml --events 5 --seed 42
-synthtraffic run pacing/delay.yaml --stdout --seed 42
-```
+Rate, interval, windows, limits, delivery controls, and schedules.
 
 | File | Covers |
 | --- | --- |
@@ -15,8 +10,16 @@ synthtraffic run pacing/delay.yaml --stdout --seed 42
 | [`combined_limits.yaml`](combined_limits.yaml) | `maxEvents` vs `maxDuration` |
 | [`loop_duration.yaml`](loop_duration.yaml) | Schedule cycle vs duration |
 | [`schedule_cycle.yaml`](schedule_cycle.yaml) | Interleaved stage batches |
+| [`schedule_restart.yaml`](schedule_restart.yaml) | Restarting batches with lifetime caps |
 | [`delay.yaml`](delay.yaml) | Connector release delay |
 | [`discard.yaml`](discard.yaml) | Probabilistic discard |
 | [`repeat.yaml`](repeat.yaml) | Duplicate connector writes |
+| [`delivery_inheritance.yaml`](delivery_inheritance.yaml) | Defaults delivery overridden per generator |
 
-Time and delivery docs: [Time](https://synthtraffic.dev/docs/learn/time/) · [Delivery](https://synthtraffic.dev/docs/learn/delivery-behavior/).
+```bash
+synthtraffic sample pacing/interval.yaml --events 5 --seed 42
+synthtraffic run pacing/schedule_cycle.yaml --stdout --seed 42 --events 20
+```
+
+Time and delivery docs: [Time](https://www.synthtraffic.io/docs/learn/time/) ·
+[Delivery](https://www.synthtraffic.io/docs/learn/delivery-behavior/).

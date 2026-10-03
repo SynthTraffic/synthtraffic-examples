@@ -1,0 +1,31 @@
+connections:
+  kafka:
+    type: kafka
+    brokers: [localhost:9092]
+generators:
+  - name: json_events
+    connection: kafka
+    topic: synthtraffic-json
+    config: {maxEvents: 2}
+    serialization: {key: json, value: json}
+    key:
+      tenant: demo
+      id: $id
+    headers:
+      source: synthtraffic
+    value:
+      id: =seq()
+  - name: string_events
+    connection: kafka
+    topic: synthtraffic-strings
+    config: {maxEvents: 2}
+    serialization: {key: string, value: string}
+    key: demo
+    value: =seq(pattern=EVENT-%03d)
+  - name: binary_events
+    connection: kafka
+    topic: synthtraffic-bytes
+    config: {maxEvents: 2}
+    serialization: {key: bytes, value: bytes}
+    key: =bytes(4)
+    value: =bytes(16)

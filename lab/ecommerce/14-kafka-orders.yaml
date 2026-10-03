@@ -1,0 +1,37 @@
+# Exercise 14 — Kafka sink shape
+# Concepts: connections, topic, key, headers, serialization
+# Preview safely: synthtraffic sample lab/ecommerce/14-kafka-orders.yaml --events 4 --seed 42
+# Real produce needs Kafka on localhost:9092 and an existing topic.
+
+defaults:
+  seed: 42
+  clock:
+    start: 2026-01-15T10:00:00Z
+  faker:
+    locale: en_US
+
+connections:
+  kafka:
+    type: kafka
+    brokers: [localhost:9092]
+
+generators:
+  - name: orders
+    connection: kafka
+    topic: synthtraffic-lab-orders
+    config:
+      maxEvents: 4
+    serialization:
+      key: string
+      value: json
+    vars:
+      orderId: =seq(pattern=ORD-%03d)
+    key: =formatString(order-%s, $orderId)
+    headers:
+      source: ecommerce-lab
+      content-type: application/json
+    value:
+      orderId: $orderId
+      customerName: =faker(person.fullName)
+      amount: =float(10, 200, round=2)
+      createdAt: =now(format=RFC3339Milli)

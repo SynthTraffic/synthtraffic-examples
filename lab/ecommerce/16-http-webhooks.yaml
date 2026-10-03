@@ -1,0 +1,40 @@
+# Exercise 16 — HTTP requests
+# Concepts: http connection, method, path, query, headers, body, env()
+# Companion: ../../http-server (listens on :18081). Preview with sample without opening sockets.
+
+defaults:
+  seed: 42
+  clock:
+    start: 2026-01-15T10:00:00Z
+
+connections:
+  orders-api:
+    type: http
+    baseUrl: http://localhost:18081/api
+    timeout: 10s
+    concurrency: 50
+
+generators:
+  - name: order_webhooks
+    connection: orders-api
+    config:
+      maxEvents: 4
+      rate: 5/s
+    const:
+      tenantId: lab-tenant
+    vars:
+      orderId: =formatString(ORD-%06d, seq())
+    method: POST
+    path: /orders/$orderId
+    query:
+      environment: lab
+      tenantId: $tenantId
+    headers:
+      Content-Type: application/json
+      Authorization: =concat('Bearer ', env(API_TOKEN, lab-token))
+      X-Source: ecommerce-lab
+    body:
+      orderId: $orderId
+      tenantId: $tenantId
+      amount: =float(10, 500, round=2)
+      createdAt: =now(format=RFC3339Milli)

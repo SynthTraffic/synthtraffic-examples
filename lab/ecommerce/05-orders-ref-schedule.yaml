@@ -1,0 +1,39 @@
+# Exercise 05 — related orders
+# Concepts: whole-record ref(), schedule stages, history.maxEntries, field projection
+
+defaults:
+  seed: 42
+  clock:
+    start: 2026-01-15T10:00:00Z
+  faker:
+    locale: en_US
+
+generators:
+  - name: customers
+    config:
+      maxEvents: 3
+      history:
+        maxEntries: 3
+    vars:
+      person: =faker(person)
+    value:
+      customerId: =seq(pattern=CUST-%03d)
+      fullName: $person.fullName
+      email: $person.email
+
+  - name: orders
+    config:
+      maxEvents: 6
+    value:
+      orderId: =seq(pattern=ORD-%03d)
+      customer: =ref(customers)
+      customerId: $customer.customerId
+      customerName: $customer.fullName
+      product: =faker(commerce.productName)
+      amount: =float(10, 200, round=2)
+      createdAt: =now(format=RFC3339Milli)
+
+schedule:
+  stages:
+    - run: [customers]
+    - run: [orders]

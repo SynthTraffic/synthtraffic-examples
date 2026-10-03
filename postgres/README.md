@@ -1,22 +1,22 @@
 # PostgreSQL schema examples
 
-These files show how Synthtraffic talks to PostgreSQL: create tables, add columns, or leave the schema alone. They need a reachable database and `POSTGRES_PASSWORD` or `POSTGRES_URL` (see each file).
+Focused scenarios for schema policies and constraint behavior. Use with a local
+PostgreSQL instance and `POSTGRES_PASSWORD`.
 
-The happy-path sink example is [`../connectors/postgres.yaml`](../connectors/postgres.yaml).
-
-| File | What it demonstrates |
+| File | Covers |
 | --- | --- |
-| [`create_if_missing_additive.yaml`](create_if_missing_additive.yaml) | `create-if-missing` adds missing columns |
-| [`constraints.yaml`](constraints.yaml) | Declared constraints on generated tables |
-| [`manual_existing_table.yaml`](manual_existing_table.yaml) | `manual` — Synthtraffic does not change table structure |
-| [`foreign_key_violation.yaml`](foreign_key_violation.yaml) | Expected failure when generated rows break a foreign key |
-| [`not_null_violation.yaml`](not_null_violation.yaml) | Expected failure on NOT NULL |
-| [`wrong_type.yaml`](wrong_type.yaml) | Expected failure when a value does not match the column type |
-
-The last three files are meant to fail at run time so you can see the diagnostic. Preview payloads without touching the database:
+| [`constraints.yaml`](constraints.yaml) | Declared column constraints |
+| [`create_if_missing_additive.yaml`](create_if_missing_additive.yaml) | Additive `create-if-missing` |
+| [`manual_existing_table.yaml`](manual_existing_table.yaml) | `manual` policy (no DDL) |
+| [`foreign_key_violation.yaml`](foreign_key_violation.yaml) | Server-side FK rejection |
+| [`not_null_violation.yaml`](not_null_violation.yaml) | NOT NULL rejection |
+| [`wrong_type.yaml`](wrong_type.yaml) | Type mismatch rejection |
 
 ```bash
-synthtraffic run postgres/constraints.yaml --stdout --events 2 --seed 42
+export POSTGRES_PASSWORD=postgres
+synthtraffic sample postgres/constraints.yaml --events 2 --seed 42
+# Real insert (needs a running database):
+# synthtraffic run postgres/constraints.yaml
 ```
 
-Schema policy reference: [PostgreSQL](https://synthtraffic.dev/docs/connectors/postgresql/).
+Schema policy reference: [PostgreSQL](https://www.synthtraffic.io/docs/connectors/postgresql/).

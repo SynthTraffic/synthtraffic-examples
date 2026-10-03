@@ -1,0 +1,33 @@
+# Exercise 11 — logic, comparisons, modifiers
+# Concepts: case, comparisons, and/or/not, nullable, optional, unique, cardinality
+
+defaults:
+  seed: 42
+  clock:
+    start: 2026-01-15T10:00:00Z
+
+generators:
+  - name: risk_scores
+    config:
+      maxEvents: 6
+    vars:
+      amount: =float(10, 500, round=2)
+      attempts: =int(1, 5, unique=true)
+    value:
+      orderId: =formatString(ORD-%06d, seq())
+      amount: $amount
+      attempts: $attempts
+      deviceId: =uuid(cardinality=2)
+      coupon: =string(6, optional=0.4)
+      note: =string(12, nullable=0.3)
+      tier:
+        =case:
+          - if: =gte($amount, 300)
+            then: high
+          - if: =gte($amount, 100)
+            then: medium
+          - else: low
+      needsReview: =or(eq($tier, high), gte($attempts, 4))
+      score: =normal(mean=50, sd=15, min=0, max=100, round=1)
+      both: =and(gte($amount, 10), lte($amount, 500))
+      inverted: =not(eq($tier, high))

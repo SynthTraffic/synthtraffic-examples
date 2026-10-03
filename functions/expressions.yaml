@@ -8,11 +8,11 @@ generators:
     config:
       maxEvents: 3
     value:
-      eventId: =seq(format=EV-%03d)
+      eventId: =seq(pattern=EV-%03d)
       sku: =cycle(SKU-100, SKU-200, SKU-300)
       productName: =faker(commerce.productName)
       category: =oneOf(electronics, home, travel)
-      price: =uniform(10, 100, round=2)
+      price: =float(10, 100, round=2)
       discountEligible: =bool(0.5)
       score: =round(normal(mean=75, sd=8), 1)
       emittedAt: =now()

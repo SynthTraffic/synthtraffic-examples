@@ -1,0 +1,33 @@
+# Illustrative monitoring values; these ranges are fixture parameters.
+defaults:
+  seed: 42
+  clock:
+    start: 2026-01-02T09:00:00Z
+generators:
+  - name: observations
+    config:
+      maxEvents: 12
+      interval: 1ms
+    instances:
+      count: 2
+      fields:
+        deviceId: =seq(pattern=MON-%03d)
+        patientId: =seq(pattern=PAT-%03d)
+    vars:
+      readingNumber: =seq(start=1)
+      heartRate: =int(60, 100)
+      previousHeartRate:
+        =case:
+          - if: =lte($readingNumber, 2)
+            then: null
+          - else: =previous(heartRate)
+    value:
+      recordType: observation
+      observationId: =seq(pattern=OBS-%03d)
+      deviceId: $deviceId
+      patientId: $patientId
+      observedAt: =now()
+      heartRate: $heartRate
+      previousHeartRate: $previousHeartRate
+      oxygenSaturation: =int(94, 100)
+      temperatureCelsius: =normal(mean=36.8, sd=0.3, min=36, max=38, round=1)

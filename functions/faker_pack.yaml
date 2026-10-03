@@ -1,0 +1,17 @@
+defaults:
+  seed: 91
+  faker:
+    locale: en_US
+    packs:
+      vehicle: ./faker_pack_vehicle.csv
+
+generators:
+  - name: inventory
+    config:
+      maxEvents: 2
+    vars:
+      car: =faker(vehicle)
+    value:
+      make: $car.make
+      model: $car.model
+      makeLeaf: =faker(vehicle.make)

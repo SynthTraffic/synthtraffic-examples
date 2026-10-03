@@ -1,0 +1,30 @@
+# Exercise 07 — previous field per instance
+# Concepts: previous(field), instance isolation, case for the first reading
+
+defaults:
+  seed: 42
+  clock:
+    start: 2026-01-15T10:00:00Z
+
+generators:
+  - name: cart_updates
+    config:
+      maxEvents: 8
+    instances:
+      count: 2
+      fields:
+        cartId: =seq(pattern=CART-%02d)
+    vars:
+      updateNumber: =seq(start=1)
+      itemCount: =int(1, 4)
+      previousItemCount:
+        =case:
+          - if: =lte($updateNumber, 2)
+            then: null
+          - else: =previous(itemCount)
+    value:
+      cartId: $cartId
+      updateNumber: $updateNumber
+      itemCount: $itemCount
+      previousItemCount: $previousItemCount
+      updatedAt: =now(format=RFC3339Milli)

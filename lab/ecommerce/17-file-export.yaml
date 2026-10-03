@@ -1,0 +1,36 @@
+# Exercise 17 — local file sink
+# Concepts: file connection, prefix, jsonl, compression, rolling
+# Preview with sample. Real run writes under ./output (gitignored).
+
+defaults:
+  seed: 42
+  clock:
+    start: 2026-01-15T10:00:00Z
+
+connections:
+  local-orders:
+    type: file
+    directory: ./output
+    format: jsonl
+    compression: gzip
+    rolling:
+      maxRecords: 3
+      maxBytes: 16MiB
+      maxDuration: 10s
+    maxOpenStreams: 8
+
+generators:
+  - name: orders
+    connection: local-orders
+    config:
+      maxEvents: 6
+    const:
+      tenantId: lab-tenant
+    vars:
+      outputPrefix: =formatString(orders/tenant=%s/part-, $tenantId)
+    prefix: $outputPrefix
+    value:
+      orderId: =formatString(ORD-%06d, seq())
+      tenantId: $tenantId
+      amount: =float(10, 500, round=2)
+      createdAt: =now(format=RFC3339Milli)

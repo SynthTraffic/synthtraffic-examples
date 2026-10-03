@@ -1,0 +1,16 @@
+# Compiles successfully; runtime must fail instead of evicting parent history.
+generators:
+  - name: parents
+    config:
+      maxEvents: 3
+      history: {maxEntries: 2}
+    value:
+      id: =seq()
+  - name: children
+    config: {maxEvents: 1}
+    value:
+      parentId: =ref(parents.id)
+schedule:
+  stages:
+    - run: [parents]
+    - run: [children]

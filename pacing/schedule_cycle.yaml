@@ -17,12 +17,12 @@ generators:
     value:
       orderId: =seq(start=1)
       customerId: =ref(customers.customerId)
-      amount: =uniform(10, 100, round=2)
+      amount: =float(10, 100, round=2)
 
 schedule:
-  cycle: true
+  mode: cycle
   stages:
     - run: [customers]
-      maxEvents: 5
+      batchSize: 5
     - run: [orders]
-      maxEvents: 10
+      batchSize: 10

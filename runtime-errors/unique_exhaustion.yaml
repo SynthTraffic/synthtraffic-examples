@@ -1,0 +1,6 @@
+# Three unique records cannot be drawn from this two-value domain.
+generators:
+  - name: statuses
+    config: {maxEvents: 3}
+    value:
+      status: =oneOf(pending, complete, unique=true)
