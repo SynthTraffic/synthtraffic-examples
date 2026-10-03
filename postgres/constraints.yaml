@@ -20,7 +20,7 @@ generators:
         department_id: text primary key
         name: text not null
     row:
-      department_id: =format(dept-%d, seq())
+      department_id: =formatString(dept-%d, seq())
       name: =oneOf(Engineering, Finance)
 
   - name: employees
@@ -39,7 +39,7 @@ generators:
     vars:
       department: =ref(departments.department_id)
     row:
-      employee_id: =format(emp-%d, seq())
+      employee_id: =formatString(emp-%d, seq())
       department_id: $department
       full_name: =faker(person.fullName)
       status: active

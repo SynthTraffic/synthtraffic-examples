@@ -1,0 +1,12 @@
+# Each visit emits 1, 2 again; maxEvents is still the lifetime cap of six.
+generators:
+  - name: snapshots
+    config:
+      maxEvents: 6
+    value:
+      snapshotId: =seq(start=1)
+schedule:
+  mode: restart
+  stages:
+    - run: [snapshots]
+      batchSize: 2
