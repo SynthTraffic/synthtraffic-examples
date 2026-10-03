@@ -3,7 +3,7 @@
 This repository is an executable curriculum for the current Synthtraffic V1 DSL.
 Docs: [DSL concepts](https://www.synthtraffic.io/docs/learn/scenario/) ·
 [Expressions](https://www.synthtraffic.io/docs/expressions/syntax/) ·
-[CLI](https://www.synthtraffic.io/docs/cli/overview/).
+[CLI](https://www.synthtraffic.io/docs/cli/sample/).
 
 | V1 capability | Examples |
 | --- | --- |
