@@ -1,0 +1,11 @@
+generators:
+  - name: modifiers
+    config:
+      maxEvents: 4
+    value:
+      id: =int(1, 1000, unique=true)
+      nullableField: =string(8, nullable=0.5)
+      optionalField: =string(8, optional=0.5)
+      pooledId: =uuid(cardinality=2)
+      rounded: =float(1, 10, round=2)
+      clamped: =normal(mean=50, sd=10, min=40, max=60, round=1)

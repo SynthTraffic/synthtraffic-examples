@@ -8,7 +8,7 @@ generators:
     config:
       maxEvents: 2
     value:
-      orderId: =seq(format=ORD-%03d)
+      orderId: =seq(pattern=ORD-%03d)
       items:
         =array:
           count: 3

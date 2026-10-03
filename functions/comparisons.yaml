@@ -1,0 +1,16 @@
+generators:
+  - name: comparisons
+    config: {maxEvents: 2}
+    vars:
+      score: =cycle(40, 80)
+    value:
+      score: $score
+      equal: =eq($score, 40)
+      different: =neq($score, 40)
+      below: =lt($score, 60)
+      atMost: =lte($score, 60)
+      above: =gt($score, 60)
+      atLeast: =gte($score, 60)
+      both: =and(gte($score, 40), lte($score, 80))
+      either: =or(eq($score, 40), eq($score, 80))
+      inverted: =not(eq($score, 40))

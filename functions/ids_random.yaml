@@ -9,4 +9,4 @@ generators:
       ratio: =float(0, 1)
       token: =string(8, alphabet=hex)
       blob: =bytes(4)
-      channel: =categorical(web=0.7, mobile=0.2, store=0.1)
+      channel: =weightedOneOf(web=0.7, mobile=0.2, store=0.1)
