@@ -1,4 +1,5 @@
-# Exercise 11 — logic, comparisons, modifiers
+# ShopLane day — step 11: risk scores decide who needs a review
+# Why: fraud and support tools need derived bands from the same order fields.
 # Concepts: case, comparisons, and/or/not, nullable, optional, unique, cardinality
 
 defaults:
@@ -7,13 +8,16 @@ defaults:
     start: 2026-01-15T10:00:00Z
 
 generators:
-  - name: risk_scores
+  - name: order_risk
     config:
       maxEvents: 6
+    const:
+      store: ShopLane
     vars:
       amount: =float(10, 500, round=2)
       attempts: =int(1, 5, unique=true)
     value:
+      store: $store
       orderId: =formatString(ORD-%06d, seq())
       amount: $amount
       attempts: $attempts

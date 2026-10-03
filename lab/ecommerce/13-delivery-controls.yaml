@@ -1,4 +1,5 @@
-# Exercise 13 — delay, discard, repeat
+# ShopLane day — step 13: notify shoppers — some delayed, dropped, or retried
+# Why: notification and outbox tests need imperfect delivery, not perfect streams.
 # Concepts: delivery.delay, delivery.discard, delivery.repeat, randomDuration
 # Tip: sample ignores pacing; run --stdout shows attempted vs emitted stats on stderr.
 
@@ -8,7 +9,7 @@ defaults:
     start: 2026-01-15T10:00:00Z
 
 generators:
-  - name: notifications
+  - name: order_notifications
     config:
       maxEvents: 8
       delivery:
@@ -20,7 +21,11 @@ generators:
         repeat:
           probability: 0.3
           times: 1
+    const:
+      store: ShopLane
     value:
+      store: $store
       notificationId: =seq(pattern=N-%03d)
+      orderId: =seq(pattern=ORD-%03d)
       channel: =oneOf(email, sms, push)
       eventAt: =now(format=RFC3339Milli)

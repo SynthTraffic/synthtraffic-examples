@@ -1,23 +1,52 @@
-# Exercise 09 — shipment lifecycle with fixed next
-# Concepts: multi-step stateMachine, fixed next, terminal COMPLETED
+# ShopLane day — step 09: captured orders move through fulfillment
+# Why: downstream services watch packed → out_for_delivery → delivered on one shipment id.
+# Concepts: multi-step stateMachine with fixed next, ref(orders)
 
 defaults:
   seed: 42
   clock:
     start: 2026-01-15T10:00:00Z
+  faker:
+    locale: en_US
 
 generators:
+  - name: customers
+    config:
+      maxEvents: 2
+      history:
+        maxEntries: 2
+    vars:
+      person: =faker(person)
+    value:
+      customerId: =seq(pattern=CUST-%03d)
+      fullName: $person.fullName
+
+  - name: orders
+    config:
+      maxEvents: 3
+      history:
+        maxEntries: 3
+    value:
+      orderId: =seq(pattern=ORD-%03d)
+      customer: =ref(customers)
+      customerId: $customer.customerId
+      amount: =float(25, 160, round=2)
+
   - name: shipments
     config:
       maxEvents: 9
+    const:
+      store: ShopLane
     instances:
       count: 3
       fields:
         shipmentId: =seq(pattern=SHP-%03d)
-        orderId: =seq(pattern=ORD-%03d)
+        order: =ref(orders)
     value:
+      store: $store
       shipmentId: $shipmentId
-      orderId: $orderId
+      orderId: $order.orderId
+      customerId: $order.customerId
       eventAt: =now(format=RFC3339Milli)
     stateMachine:
       initial: packed
@@ -33,3 +62,9 @@ generators:
         delivered:
           emit:
             status: DELIVERED
+
+schedule:
+  stages:
+    - run: [customers]
+    - run: [orders]
+    - run: [shipments]

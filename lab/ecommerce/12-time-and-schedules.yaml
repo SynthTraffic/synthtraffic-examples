@@ -1,4 +1,5 @@
-# Exercise 12 — time helpers and schedule cycle
+# ShopLane day — step 12: flash promos interleave with order batches
+# Why: campaign windows and batch schedules are part of realistic traffic shape.
 # Concepts: timestamp, clockStart, addDuration, schedule mode cycle, batchSize
 
 defaults:
@@ -11,16 +12,23 @@ generators:
   - name: daily_promos
     config:
       maxEvents: 4
+    const:
+      store: ShopLane
     value:
+      store: $store
       promoId: =seq(pattern=PROMO-%02d)
       startsAt: =timestamp(start=clockStart(), advanceBy=24h, format=RFC3339)
       endsAt: =addDuration($startsAt, 12h)
 
-  - name: flash_batches
+  - name: order_batches
     config:
       maxEvents: 6
+    const:
+      store: ShopLane
     value:
+      store: $store
       batchId: =seq(start=1)
+      orderId: =seq(pattern=ORD-%03d)
       at: =now(format=RFC3339Milli)
 
 schedule:
@@ -28,5 +36,5 @@ schedule:
   stages:
     - run: [daily_promos]
       batchSize: 2
-    - run: [flash_batches]
+    - run: [order_batches]
       batchSize: 2

@@ -1,5 +1,6 @@
-# Exercise 10 — order line items and aggregates
-# Concepts: array, count/sum/avg/min/max, selectKeys, omitKeys, merge
+# ShopLane day — step 10: an order is more than one line
+# Why: totals must come from the same synthetic lines the order carries.
+# Concepts: array, count/sum/avg/min/max, selectKeys
 
 defaults:
   seed: 42
@@ -12,6 +13,8 @@ generators:
   - name: orders_with_lines
     config:
       maxEvents: 3
+    const:
+      store: ShopLane
     vars:
       customer:
         customerId: =seq(pattern=CUST-%03d)
@@ -22,6 +25,7 @@ generators:
           from: $customer
           keys: [customerId, name]
     value:
+      store: $store
       orderId: =seq(pattern=ORD-%03d)
       customer: $publicCustomer
       items:
@@ -29,6 +33,7 @@ generators:
           count: 3
           of:
             lineNumber: =seq(start=1)
+            productId: =seq(pattern=SKU-%03d)
             product: =cycle(keyboard, mouse, monitor)
             unitPrice: =cycle(25, 15, 200)
             quantity: =int(1, 3)
@@ -38,4 +43,4 @@ generators:
       averageUnitPrice: =avg($items.unitPrice)
       cheapestUnitPrice: =min($items.unitPrice)
       mostExpensiveUnitPrice: =max($items.unitPrice)
-      createdAt: =now(format=RFC3339Milli)
+      placedAt: =now(format=RFC3339Milli)

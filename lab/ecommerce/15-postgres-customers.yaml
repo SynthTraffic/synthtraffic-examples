@@ -1,6 +1,6 @@
-# Exercise 15 — PostgreSQL rows
-# Concepts: postgres connection, schema.policy, columns, row mapping, env()
-# Preview: sample / run --stdout (no DB). Real run needs POSTGRES_PASSWORD and a reachable server.
+# ShopLane day — step 15: durable customer rows for the warehouse path
+# Why: the same shoppers can land in PostgreSQL with an explicit schema policy.
+# Preview: sample / run --stdout. Real run needs POSTGRES_PASSWORD and a server.
 
 defaults:
   seed: 42
@@ -28,12 +28,16 @@ generators:
     schema:
       policy: drop-and-create
       columns:
+        store: text not null
         customer_id: text primary key
         full_name: text not null
         email: text
         active: boolean default true
         created_at: timestamptz default now()
+    const:
+      store: ShopLane
     row:
+      store: $store
       customer_id: =seq(pattern=CUST-%03d)
       full_name: =faker(person.fullName)
       email: =faker(person.email)
