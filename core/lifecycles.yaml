@@ -10,7 +10,7 @@ generators:
     instances:
       count: 2
       fields:
-        shipmentId: =seq(format=SHP-%03d)
+        shipmentId: =seq(pattern=SHP-%03d)
     value:
       shipmentId: $shipmentId
       eventAt: =now()
