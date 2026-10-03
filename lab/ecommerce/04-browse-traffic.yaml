@@ -1,0 +1,35 @@
+# ShopLane day — step 04: morning traffic hits the storefront
+# Why: systems under test often care about rate and mix, not only final orders.
+# Concepts: rate, interval, maxEvents, maxDuration
+# Tip: sample ignores real-time pacing; use run --stdout to feel timing.
+
+defaults:
+  seed: 42
+  clock:
+    start: 2026-01-15T10:00:00Z
+
+generators:
+  - name: page_views
+    config:
+      rate: 10/s
+      maxEvents: 8
+    const:
+      store: ShopLane
+    value:
+      store: $store
+      eventId: =seq(pattern=VIEW-%03d)
+      path: =oneOf(/, /catalog, /product, /cart, /checkout)
+      at: =now(format=RFC3339Milli)
+
+  - name: cart_polls
+    config:
+      interval: 200ms
+      maxEvents: 3
+      maxDuration: 2s
+    const:
+      store: ShopLane
+    value:
+      store: $store
+      pollId: =seq(pattern=POLL-%03d)
+      path: /cart
+      at: =now(format=RFC3339Milli)

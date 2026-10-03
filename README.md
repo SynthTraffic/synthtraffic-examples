@@ -59,7 +59,7 @@ Then open `http://127.0.0.1:8787` and load a file under `/work`.
 
 | Folder | What it teaches |
 | --- | --- |
-| [`lab/ecommerce/`](lab/ecommerce/) | Progressive 18-step shop lab covering the full V1 DSL path |
+| [`lab/ecommerce/`](lab/ecommerce/) | ShopLane story lab (18 steps) + [manager demo script](lab/ecommerce/DEMO.md) |
 | [`core/`](core/) | Generators, `const` / `vars`, parent–child `ref`, relationships, `previous`, lifecycles, bounded history |
 | [`functions/`](functions/) | Expression families (`uuid`, `faker`, `case`, time, math, collections, modifiers, …) |
 | [`pacing/`](pacing/) | Interval, rate windows, duration limits, delay, discard, repeat, schedules |

@@ -6,3 +6,4 @@ http-server/http-server
 .DS_Store
 .idea/
 .vscode/
+bin-synthtraffic

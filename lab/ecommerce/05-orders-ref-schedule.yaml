@@ -1,5 +1,6 @@
-# Exercise 05 — related orders
-# Concepts: whole-record ref(), schedule stages, history.maxEntries, field projection
+# ShopLane day — step 05: catalog and shoppers exist, then orders join them
+# Why: related traffic — every order points at a real customer and SKU.
+# Concepts: schedule stages, whole-record ref(), history.maxEntries
 
 defaults:
   seed: 42
@@ -9,14 +10,32 @@ defaults:
     locale: en_US
 
 generators:
+  - name: products
+    config:
+      maxEvents: 4
+      history:
+        maxEntries: 4
+    const:
+      store: ShopLane
+    value:
+      store: $store
+      productId: =seq(pattern=SKU-%03d)
+      name: =faker(commerce.productName)
+      price: =float(9.99, 120, round=2)
+
   - name: customers
     config:
       maxEvents: 3
       history:
         maxEntries: 3
+    const:
+      store: ShopLane
+      source: ecommerce-lab
     vars:
       person: =faker(person)
     value:
+      store: $store
+      source: $source
       customerId: =seq(pattern=CUST-%03d)
       fullName: $person.fullName
       email: $person.email
@@ -24,16 +43,21 @@ generators:
   - name: orders
     config:
       maxEvents: 6
+    const:
+      store: ShopLane
     value:
+      store: $store
       orderId: =seq(pattern=ORD-%03d)
       customer: =ref(customers)
+      product: =ref(products)
       customerId: $customer.customerId
       customerName: $customer.fullName
-      product: =faker(commerce.productName)
-      amount: =float(10, 200, round=2)
-      createdAt: =now(format=RFC3339Milli)
+      productId: $product.productId
+      productName: $product.name
+      amount: $product.price
+      placedAt: =now(format=RFC3339Milli)
 
 schedule:
   stages:
-    - run: [customers]
+    - run: [products, customers]
     - run: [orders]

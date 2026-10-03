@@ -1,5 +1,5 @@
-# Exercise 17 — local file sink
-# Concepts: file connection, prefix, jsonl, compression, rolling
+# ShopLane day — step 17: park order JSONL for batch jobs
+# Why: some pipelines still start from files; rolling keeps parts bounded.
 # Preview with sample. Real run writes under ./output (gitignored).
 
 defaults:
@@ -25,12 +25,14 @@ generators:
     config:
       maxEvents: 6
     const:
+      store: ShopLane
       tenantId: lab-tenant
     vars:
-      outputPrefix: =formatString(orders/tenant=%s/part-, $tenantId)
+      outputPrefix: =formatString(orders/store=%s/tenant=%s/part-, $store, $tenantId)
     prefix: $outputPrefix
     value:
+      store: $store
       orderId: =formatString(ORD-%06d, seq())
       tenantId: $tenantId
       amount: =float(10, 500, round=2)
-      createdAt: =now(format=RFC3339Milli)
+      placedAt: =now(format=RFC3339Milli)

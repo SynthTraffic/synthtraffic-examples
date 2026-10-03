@@ -1,6 +1,6 @@
-# Exercise 16 — HTTP requests
-# Concepts: http connection, method, path, query, headers, body, env()
-# Companion: ../../http-server (listens on :18081). Preview with sample without opening sockets.
+# ShopLane day — step 16: order webhooks to an HTTP API
+# Why: fulfillment partners and internal services often ingest POSTs, not topics.
+# Companion: ../../http-server (listens on :18081). Preview with sample.
 
 defaults:
   seed: 42
@@ -21,6 +21,7 @@ generators:
       maxEvents: 4
       rate: 5/s
     const:
+      store: ShopLane
       tenantId: lab-tenant
     vars:
       orderId: =formatString(ORD-%06d, seq())
@@ -29,12 +30,15 @@ generators:
     query:
       environment: lab
       tenantId: $tenantId
+      store: $store
     headers:
       Content-Type: application/json
       Authorization: =concat('Bearer ', env(API_TOKEN, lab-token))
       X-Source: ecommerce-lab
+      X-Store: ShopLane
     body:
+      store: $store
       orderId: $orderId
       tenantId: $tenantId
       amount: =float(10, 500, round=2)
-      createdAt: =now(format=RFC3339Milli)
+      placedAt: =now(format=RFC3339Milli)

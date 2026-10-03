@@ -1,5 +1,5 @@
-# Exercise 18 — capstone marketplace day
-# Concepts: customers → orders → payments lifecycle, refs, schedule, coherent faker person
+# ShopLane day — step 18: the whole story in one scenario
+# Why: one reproducible day — catalog, shoppers, orders, pay, ship.
 # Run: synthtraffic run lab/ecommerce/18-marketplace-day.yaml --stdout --seed 42
 
 defaults:
@@ -10,14 +10,32 @@ defaults:
     locale: en_US
 
 generators:
+  - name: products
+    config:
+      maxEvents: 4
+      history:
+        maxEntries: 4
+    const:
+      store: ShopLane
+    value:
+      store: $store
+      productId: =seq(pattern=SKU-%03d)
+      name: =faker(commerce.productName)
+      price: =float(12, 140, round=2)
+
   - name: customers
     config:
       maxEvents: 4
       history:
         maxEntries: 4
+    const:
+      store: ShopLane
+      source: ecommerce-lab
     vars:
       person: =faker(person)
     value:
+      store: $store
+      source: $source
       customerId: =seq(pattern=CUST-%03d)
       fullName: $person.fullName
       email: $person.email
@@ -28,29 +46,38 @@ generators:
       maxEvents: 4
       history:
         maxEntries: 4
+    const:
+      store: ShopLane
     value:
+      store: $store
       orderId: =seq(pattern=ORD-%03d)
       customer: =ref(customers)
+      product: =ref(products)
       customerId: $customer.customerId
       customerName: $customer.fullName
-      product: =faker(commerce.productName)
-      amount: =float(15, 180, round=2)
+      productId: $product.productId
+      productName: $product.name
+      amount: $product.price
       placedAt: =now(format=RFC3339Milli)
 
   - name: payments
     config:
       maxEvents: 8
+    const:
+      store: ShopLane
+      currency: USD
     instances:
       count: 4
       fields:
         paymentId: =seq(pattern=PAY-%03d)
         order: =ref(orders)
     value:
+      store: $store
       paymentId: $paymentId
       orderId: $order.orderId
       customerId: $order.customerId
       amount: $order.amount
-      currency: USD
+      currency: $currency
       eventAt: =now(format=RFC3339Milli)
     stateMachine:
       initial: authorized
@@ -69,8 +96,39 @@ generators:
           emit:
             status: FAILED
 
+  - name: shipments
+    config:
+      maxEvents: 12
+    const:
+      store: ShopLane
+    instances:
+      count: 4
+      fields:
+        shipmentId: =seq(pattern=SHP-%03d)
+        order: =ref(orders)
+    value:
+      store: $store
+      shipmentId: $shipmentId
+      orderId: $order.orderId
+      customerId: $order.customerId
+      eventAt: =now(format=RFC3339Milli)
+    stateMachine:
+      initial: packed
+      states:
+        packed:
+          emit:
+            status: PACKED
+          next: out_for_delivery
+        out_for_delivery:
+          emit:
+            status: OUT_FOR_DELIVERY
+          next: delivered
+        delivered:
+          emit:
+            status: DELIVERED
+
 schedule:
   stages:
-    - run: [customers]
+    - run: [products, customers]
     - run: [orders]
-    - run: [payments]
+    - run: [payments, shipments]
