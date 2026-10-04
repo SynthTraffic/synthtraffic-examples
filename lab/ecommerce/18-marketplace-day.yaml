@@ -131,4 +131,5 @@ schedule:
   stages:
     - run: [products, customers]
     - run: [orders]
-    - run: [payments, shipments]
+    - run: [payments]
+    - run: [shipments]
