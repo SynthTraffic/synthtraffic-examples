@@ -1,0 +1,39 @@
+generators:
+  - name: orders
+    instances:
+      count: 5
+      fields:
+        orderId: =seq(pattern=ORD-%03d,start=1)
+      startGap: 1h
+    value:
+      orderId: $orderId
+      placedAt: =now(format=RFC3339Milli)
+
+    stateMachine:
+      initial: order_created
+      states:
+        order_created:
+          emit:
+            status: ORDER_CREATED
+          next: payment_processing
+        payment_processing:
+          emit:
+            status: PAYMENT_PROCESSING
+          next: =weightedOneOf(paymentSucceeded=0.6, paymentFailed=0.4)
+        paymentSucceeded:
+          emit:
+            status: PAYMENT_SUCCEEDED
+            paymentId: =uuid()
+          next: shipped
+        paymentFailed:
+          emit:
+            status: PAYMENT_FAILED
+            failureReason: =oneOf(INSUFFICIENT_FUNDS, BANK_DECLINED, PAYMENT_TIMEOUT)
+        shipped:
+          emit:
+            status: SHIPPED
+            trackingId: =uuid()
+          next: delivered
+        delivered:
+          emit:
+            status: DELIVERED

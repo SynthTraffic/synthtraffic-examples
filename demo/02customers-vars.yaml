@@ -1,0 +1,16 @@
+# vars
+defaults:
+  seed: 42
+  maxEvents: 5
+
+generators:
+  - name: customers
+    vars:
+      person: =faker(person)
+    value:
+      customerId: =uuid()
+      fullName: $person.fullName
+      firstName: $person.firstName
+      lastName: $person.lastName
+      email: $person.email
+      createdAt: =now()

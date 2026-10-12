@@ -1,0 +1,40 @@
+defaults:
+  maxEvents: 5
+
+generators:
+  - name: products
+    value:
+      productId: =seq(pattern=SKU-%03d,start=1)
+      name: =faker(commerce.productName)
+      category: =oneOf(electronics, apparel, home, outdoor)
+      price: =float(9.99, 249.99, round=2)
+
+  - name: customers
+    config:
+      maxEvents: 3
+    value:
+      customerId: =uuid()
+      fullName: =concat($firstName," ", $lastName)
+      firstName: =faker(person.firstName)
+      lastName: =faker(person.lastName)
+
+  - name: orders
+    config:
+      maxEvents: 2
+      rate: 1/m
+    vars:
+      customer: =ref(customers)
+      product: =ref(products)
+    value:
+      orderId: =seq(pattern=ORD-%03d,start=1)
+      customerId: $customer.customerId
+      customerName: $customer.fullName
+      productId: $product.productId
+      productName: $product.name
+      amount: $product.price
+      placedAt: =now(format=RFC3339Milli)
+
+schedule:
+  stages:
+    - run: [products, customers]
+    - run: [orders]
